@@ -11,12 +11,16 @@ export default function Header() {
 
   if (isConnected) {
     return (
-      <Navbar className="justify-content-between">
+      <Navbar className="justify-content-between bg-dark" variant="dark">
         <Container>
-          <NavbarBrand>TicketMaster</NavbarBrand>
-          <a href="/events/create">Create new event</a>
           <div>
-            <p>Address: {address}</p>
+            <Navbar.Brand href="/" className="text-white">
+              TicketMaster
+            </Navbar.Brand>
+            <a href="/events/create">Create new event</a>
+          </div>
+          <div className="d-flex align-items-center">
+            <p className="mb-0 text-white ms-2">Address: {address}</p>
             <Button onClick={() => disconnect()}>Disconnect</Button>
           </div>
         </Container>
@@ -24,5 +28,18 @@ export default function Header() {
     );
   }
 
-  return <ConnectWallet />;
+  return (
+    <Navbar className="justify-content-between bg-dark">
+      <Container>
+        <div>
+          <Navbar.Brand href="/" className="text-white">
+            TicketMaster
+          </Navbar.Brand>
+        </div>
+        <div>
+          <ConnectWallet />
+        </div>
+      </Container>
+    </Navbar>
+  );
 }

@@ -16,11 +16,6 @@ interface Event {
 }
 
 export default function CreateEvent() {
-  const { address, isConnected } = useAccount();
-
-  if (!isConnected) {
-    return null;
-  }
   const [form, setForm] = useState<Event>({
     name: "",
     description: "",

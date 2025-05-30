@@ -1,5 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Providers from "./components/Provider";
+import Header from "./components/Header";
+import { Col, Container, Row } from "react-bootstrap";
 
 export default function RootLayout({
   children,
@@ -9,7 +11,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Row>
+            <Col>
+              <Header />
+              {children}
+            </Col>
+          </Row>
+        </Providers>
       </body>
     </html>
   );
