@@ -12,12 +12,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <Row>
-            <Col>
-              <Header />
-              {children}
-            </Col>
-          </Row>
+          <Header />
+          {children}
         </Providers>
       </body>
     </html>
