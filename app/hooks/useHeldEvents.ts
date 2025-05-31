@@ -20,6 +20,7 @@ export function useHeldEvents() {
   });
 
   const eventIds = eventIdsData as bigint[] | undefined;
+  console.log(eventIds);
   const shouldFetchEvents = eventIds && eventIds.length > 0;
 
   // 2. Fetch each event’s details
@@ -40,10 +41,10 @@ export function useHeldEvents() {
   });
 
   // 3. Parse data
-  const parsedEvents: ParsedEvent[] = (eventsList ?? [])
-    .filter(
-      (e): e is { status: "success"; result: unknown } => e.status === "success"
-    )
+  const parsedEvents: ParsedEvent[] = (
+    (eventsList as Array<{ status: "success"; result: unknown }>) ?? []
+  )
+    .filter((e) => e.status === "success")
     .map((event) => {
       const [
         id,
@@ -83,6 +84,6 @@ export function useHeldEvents() {
   return {
     events: parsedEvents,
     loading: isFetchingEventIds || isFetchingEvents,
-    error: fetchEventIdsError || fetchEventsError,
+    error: (fetchEventIdsError || fetchEventsError) as any,
   };
 }

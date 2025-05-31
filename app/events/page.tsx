@@ -1,13 +1,18 @@
 "use client";
 
 import { useHeldEvents } from "../hooks/useHeldEvents";
+import { ParsedEvent } from "../types/ParsedEvent";
 
 export default function Events() {
-  const { events, loading, err } = useHeldEvents();
+  const {
+    events,
+    loading,
+    error,
+  }: { events: ParsedEvent[]; loading: boolean; error: any } = useHeldEvents();
 
   if (loading) return <div>Loading...</div>;
 
-  if (err) {
+  if (error) {
     return <>error occurred</>;
   }
 
