@@ -1,9 +1,9 @@
 "use client";
 
-import { notFound } from "next/navigation";
 import { useState } from "react";
-import { Form } from "react-bootstrap";
-import { useAccount } from "wagmi";
+import { Button, Form } from "react-bootstrap";
+import { useAccount, useWriteContract } from "wagmi";
+import ticketMasterAbi from "./../../abi/TicketMaster";
 
 interface Event {
   name: string;
@@ -11,8 +11,6 @@ interface Event {
   dateTime: string;
   price: number;
   maxTickets: number;
-  ticketNames: string;
-  ticketURIs: string;
 }
 
 export default function CreateEvent() {
@@ -22,9 +20,10 @@ export default function CreateEvent() {
     dateTime: "",
     price: 0,
     maxTickets: 0,
-    ticketNames: "",
-    ticketURIs: "",
   });
+
+  const account = useAccount();
+  const { data: hash, isPending, writeContract } = useWriteContract();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,58 +38,68 @@ export default function CreateEvent() {
     console.log(form);
   };
 
+  const createEvent = async (payload: Event) => {
+    try {
+    } catch (err) {
+      console.error(err);
+      alert("there are errors occurred");
+    }
+  };
+
   return (
-    <Form className="p-4" onSubmit={(e) => handleSubmit(e)}>
+    <Form className="p-4 container" onSubmit={(e) => handleSubmit(e)}>
       <h1 className="text-xl font-bold">Create Event</h1>
-      <input
-        name="name"
-        onChange={(e) => handleChange(e)}
-        placeholder="Event Name"
-        className="block my-2"
-      />
-      <textarea
-        name="description"
-        onChange={(e) => handleChange(e)}
-        placeholder="Description"
-        className="block my-2"
-      />
-      <input
-        type="datetime-local"
-        name="dateTime"
-        onChange={(e) => handleChange(e)}
-        className="block my-2"
-      />
-      <input
-        name="price"
-        onChange={(e) => handleChange(e)}
-        placeholder="Price (ETH)"
-        className="block my-2"
-      />
-      <input
-        name="maxTickets"
-        onChange={(e) => handleChange(e)}
-        placeholder="Max Tickets"
-        className="block my-2"
-      />
-      <input
-        name="ticketNames"
-        onChange={(e) => handleChange(e)}
-        placeholder="Ticket Names (comma separated)"
-        className="block my-2"
-      />
-      <input
-        name="ticketURIs"
-        onChange={(e) => handleChange(e)}
-        placeholder="Ticket URIs (comma separated)"
-        className="block my-2"
-      />
-      <button
-        onClick={(e) => handleSubmit(e)}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        type="submit"
-      >
+
+      <Form.Group controlId="formName" className="mb-3">
+        <Form.Label>Name</Form.Label>
+        <Form.Control
+          name="name"
+          onChange={(e) => handleChange(e)}
+          placeholder="Event Name"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formDescription" className="mb-3">
+        <Form.Label>Description</Form.Label>
+        <Form.Control
+          name="description"
+          onChange={(e) => handleChange(e)}
+          placeholder="Description"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formDateTime" className="mb-3">
+        <Form.Label>Datetime</Form.Label>
+        <Form.Control
+          type="datetime-local"
+          name="dateTime"
+          onChange={(e) => handleChange(e)}
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formPrice" className="mb-3">
+        <Form.Label>Price</Form.Label>
+        <Form.Control
+          type="number"
+          name="price"
+          onChange={(e) => handleChange(e)}
+          placeholder="Price"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formMaxTickets" className="mb-3">
+        <Form.Label>Max tickets</Form.Label>
+        <Form.Control
+          type="number"
+          name="maxTickets"
+          onChange={(e) => handleChange(e)}
+          placeholder="Max Tickets"
+        />
+      </Form.Group>
+
+      <Button onClick={(e) => handleSubmit(e)} type="submit">
         Create Event
-      </button>
+      </Button>
     </Form>
   );
 }

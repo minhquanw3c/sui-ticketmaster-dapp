@@ -20,7 +20,7 @@ export default function Header() {
             <a href="/events/create">Create new event</a>
           </div>
           <div className="d-flex align-items-center">
-            <p className="mb-0 text-white ms-2">Address: {address}</p>
+            <p className="mb-0 text-white me-2">Address: {address}</p>
             <Button onClick={() => disconnect()}>Disconnect</Button>
           </div>
         </Container>
