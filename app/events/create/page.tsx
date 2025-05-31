@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useAccount, useWriteContract } from "wagmi";
 import ticketMasterAbi from "./../../abi/TicketMaster";
+import { CONTRACT_ADDRESS } from "./../../abi/TicketMaster";
 
 interface Event {
   name: string;
@@ -22,7 +23,6 @@ export default function CreateEvent() {
     maxTickets: 0,
   });
 
-  const CONTRACT_ADDRESS = "0x6F2cFd0fE37353230575F5c0e827e986904C2aDb";
   const account = useAccount();
   const { data: hash, isPending, status, writeContract } = useWriteContract();
 
