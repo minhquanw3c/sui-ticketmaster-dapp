@@ -18,6 +18,7 @@ export default function Header() {
               TicketMaster
             </Navbar.Brand>
             <a href="/events/create">Create new event</a>
+            <a href="/events">Held events</a>
           </div>
           <div className="d-flex align-items-center">
             <p className="mb-0 text-white me-2">Address: {address}</p>
