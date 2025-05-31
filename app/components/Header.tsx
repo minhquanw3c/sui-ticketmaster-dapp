@@ -17,8 +17,15 @@ export default function Header() {
             <Navbar.Brand href="/" className="text-white">
               TicketMaster
             </Navbar.Brand>
-            <a href="/events/create">Create new event</a>
-            <a href="/events">Held events</a>
+            <a
+              href="/events/create"
+              className="me-2 text-white text-decoration-none"
+            >
+              Create new event
+            </a>
+            <a href="/events" className="text-white text-decoration-none">
+              Held events
+            </a>
           </div>
           <div className="d-flex align-items-center">
             <p className="mb-0 text-white me-2">Address: {address}</p>
