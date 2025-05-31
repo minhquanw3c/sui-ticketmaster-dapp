@@ -8,7 +8,7 @@ import ticketMasterAbi from "./../../abi/TicketMaster";
 interface Event {
   name: string;
   description: string;
-  dateTime: string;
+  dateTime: number;
   price: number;
   maxTickets: number;
 }
@@ -17,13 +17,14 @@ export default function CreateEvent() {
   const [form, setForm] = useState<Event>({
     name: "",
     description: "",
-    dateTime: "",
+    dateTime: 0,
     price: 0,
     maxTickets: 0,
   });
 
+  const CONTRACT_ADDRESS = "0x6F2cFd0fE37353230575F5c0e827e986904C2aDb";
   const account = useAccount();
-  const { data: hash, isPending, writeContract } = useWriteContract();
+  const { data: hash, isPending, status, writeContract } = useWriteContract();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -36,10 +37,29 @@ export default function CreateEvent() {
   ) => {
     e.preventDefault();
     console.log(form);
+    createEvent(form);
   };
 
   const createEvent = async (payload: Event) => {
     try {
+      const now = Math.floor(new Date(form.dateTime).getTime() / 1000);
+
+      writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: ticketMasterAbi,
+        functionName: "createEvent",
+        args: [
+          payload.name,
+          payload.description,
+          now,
+          payload.price,
+          payload.maxTickets,
+        ],
+      });
+
+      if (!isPending && status === "success") {
+        alert("created event successfully");
+      }
     } catch (err) {
       console.error(err);
       alert("there are errors occurred");
@@ -97,8 +117,12 @@ export default function CreateEvent() {
         />
       </Form.Group>
 
-      <Button onClick={(e) => handleSubmit(e)} type="submit">
-        Create Event
+      <Button
+        onClick={(e) => handleSubmit(e)}
+        type="submit"
+        disabled={isPending}
+      >
+        {isPending ? "Confirming..." : "Create event"}
       </Button>
     </Form>
   );
