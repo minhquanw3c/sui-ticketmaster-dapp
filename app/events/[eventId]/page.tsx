@@ -10,6 +10,7 @@ import { formatEther } from "ethers";
 import { useAccount } from "wagmi";
 import { Card, Badge } from "react-bootstrap";
 import { shortenAddress } from "@/app/util/string";
+import FullScreenLoader from "@/app/components/FullScreenLoader";
 
 export default function EventDetails() {
   const { eventId } = useParams();
@@ -83,6 +84,7 @@ export default function EventDetails() {
 
   return (
     <>
+      {isPending && <FullScreenLoader />}
       <Card>
         <Card.Header>Buy a ticket</Card.Header>
         <Card.Body>
@@ -103,9 +105,9 @@ export default function EventDetails() {
             </li>
           </ul>
         </Card.Body>
-        <Card.Footer>
+        <Card.Footer className="d-flex justify-content-end">
           <button
-            className="btn btn-primary px-4"
+            className="btn btn-primary px-5"
             onClick={mint}
             disabled={isPending}
           >

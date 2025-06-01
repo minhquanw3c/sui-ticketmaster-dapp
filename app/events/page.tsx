@@ -1,16 +1,26 @@
 "use client";
 
-import { Card, Row, Col, Badge } from "react-bootstrap";
+import { Card, Row, Col, Badge, Alert } from "react-bootstrap";
 import { useHeldEvents } from "../hooks/useHeldEvents";
 import { shortenAddress } from "../util/string";
+import { useAccount } from "wagmi";
 
 export default function Events() {
   const { events, loading, error } = useHeldEvents();
+  const isConnected = useAccount();
+
+  if (!isConnected) {
+    return <></>;
+  }
 
   if (loading) return <div>Loading...</div>;
 
   if (error) {
     return <div>error occurred</div>;
+  }
+
+  if (events.length === 0) {
+    return <Alert variant="info">No events found.</Alert>;
   }
 
   return (
