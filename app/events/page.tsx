@@ -1,7 +1,8 @@
 "use client";
 
+import { Card, Row, Col, Badge } from "react-bootstrap";
 import { useHeldEvents } from "../hooks/useHeldEvents";
-import { ParsedEvent } from "../types/ParsedEvent";
+import { shortenAddress } from "../util/string";
 
 export default function Events() {
   const { events, loading, error } = useHeldEvents();
@@ -14,16 +15,36 @@ export default function Events() {
 
   return (
     <>
-      <p>
-        {events.map((e) => {
+      <Row>
+        {events.map((event) => {
           return (
-            <ul>
-              <li>{e.name}</li>
-              <li>{e.description}</li>
-            </ul>
+            <Col sm="12" md="4">
+              <a href={`/events/${event.id}`} className="text-decoration-none">
+                <Card>
+                  <Card.Header>Event: {event.name}</Card.Header>
+                  <Card.Body>
+                    <ul>
+                      <li>Organizer: {shortenAddress(event.organizer)}</li>
+                      <li>Name: {event.name}</li>
+                      <li>Price per a ticket: {event.price}</li>
+                      <li>Max tickets capacity: {event.maxTickets}</li>
+                      <li>Tickets sold: {event.ticketsSold}</li>
+                      <li>
+                        Status:{" "}
+                        {event.isActive ? (
+                          <Badge bg="success">On going</Badge>
+                        ) : (
+                          <Badge bg="danger">Closed</Badge>
+                        )}
+                      </li>
+                    </ul>
+                  </Card.Body>
+                </Card>
+              </a>
+            </Col>
           );
         })}
-      </p>
+      </Row>
     </>
   );
 }

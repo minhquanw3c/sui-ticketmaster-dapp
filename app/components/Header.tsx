@@ -5,6 +5,7 @@ import ConnectWallet from "./ConnectWallet";
 import { Button, Navbar } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { Alert } from "react-bootstrap";
+import { shortenAddress } from "../util/string";
 
 export default function Header() {
   const { address, isConnected } = useAccount();
@@ -29,7 +30,9 @@ export default function Header() {
             </a>
           </div>
           <div className="d-flex align-items-center">
-            <p className="mb-0 text-white me-2">Address: {address}</p>
+            <p className="mb-0 text-white me-2">
+              Address: {shortenAddress(address ? address.toString() : "")}
+            </p>
             <Button onClick={() => disconnect()}>Disconnect</Button>
           </div>
         </Container>
