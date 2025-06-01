@@ -6,6 +6,7 @@ import { Button, Navbar } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import { Alert } from "react-bootstrap";
 import { shortenAddress } from "../util/string";
+import Link from "next/link";
 
 export default function Header() {
   const { address, isConnected } = useAccount();
@@ -19,18 +20,24 @@ export default function Header() {
             <Navbar.Brand href="/" className="text-white">
               TicketMaster
             </Navbar.Brand>
-            <a
-              href="/events/create"
+            <Link
+              href="events/create"
               className="me-3 text-white text-decoration-none"
             >
               Create event
-            </a>
-            <a href="/events" className="text-white text-decoration-none me-3">
+            </Link>
+            <Link
+              href="events"
+              className="me-3 text-white text-decoration-none"
+            >
               Events
-            </a>
-            <a href="/tickets" className="text-white text-decoration-none">
+            </Link>
+            <Link
+              href="tickets"
+              className="me-3 text-white text-decoration-none"
+            >
               Tickets
-            </a>
+            </Link>
           </div>
           <div className="d-flex align-items-center">
             <p className="mb-0 text-white me-2">
