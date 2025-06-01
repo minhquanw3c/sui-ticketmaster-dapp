@@ -13,7 +13,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <Header />
-          {children}
+          <Container className="mt-5">{children}</Container>
         </Providers>
       </body>
     </html>

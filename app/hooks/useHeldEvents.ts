@@ -1,8 +1,8 @@
 import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import ticketMasterAbi from "./../abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "./../abi/TicketMaster";
-import type { Abi } from "viem";
 import { ParsedEvent } from "../types/ParsedEvent";
+import { useEffect } from "react";
 
 export function useHeldEvents() {
   const { address } = useAccount();
@@ -13,15 +13,18 @@ export function useHeldEvents() {
     isLoading: isFetchingEventIds,
     error: fetchEventIdsError,
   } = useReadContract({
-    address: CONTRACT_ADDRESS as `0x${string}`,
-    abi: ticketMasterAbi as Abi,
+    address: CONTRACT_ADDRESS,
+    abi: ticketMasterAbi,
     functionName: "getEventIdsByOrganizer",
     args: [address],
   });
 
   const eventIds = eventIdsData as bigint[] | undefined;
-  console.log(eventIds);
   const shouldFetchEvents = eventIds && eventIds.length > 0;
+
+  useEffect(() => {
+    console.log(eventIdsData);
+  }, [eventIdsData]);
 
   // 2. Fetch each event’s details
   const {
@@ -31,8 +34,8 @@ export function useHeldEvents() {
   } = useReadContracts({
     contracts: shouldFetchEvents
       ? eventIds.map((id) => ({
-          address: CONTRACT_ADDRESS as `0x${string}`,
-          abi: ticketMasterAbi as Abi,
+          address: CONTRACT_ADDRESS,
+          abi: ticketMasterAbi,
           functionName: "getEvent",
           args: [id],
         }))

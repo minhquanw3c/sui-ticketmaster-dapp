@@ -2,8 +2,9 @@
 
 import { useAccount, useDisconnect } from "wagmi";
 import ConnectWallet from "./ConnectWallet";
-import { Button, Navbar, NavbarBrand } from "react-bootstrap";
+import { Button, Navbar } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
+import { Alert } from "react-bootstrap";
 
 export default function Header() {
   const { address, isConnected } = useAccount();
@@ -19,7 +20,7 @@ export default function Header() {
             </Navbar.Brand>
             <a
               href="/events/create"
-              className="me-2 text-white text-decoration-none"
+              className="me-3 text-white text-decoration-none"
             >
               Create new event
             </a>
@@ -37,17 +38,28 @@ export default function Header() {
   }
 
   return (
-    <Navbar className="justify-content-between bg-dark">
-      <Container>
-        <div>
-          <Navbar.Brand href="/" className="text-white">
-            TicketMaster
-          </Navbar.Brand>
-        </div>
-        <div>
-          <ConnectWallet />
-        </div>
+    <>
+      <Navbar className="justify-content-between bg-dark">
+        <Container>
+          <div>
+            <Navbar.Brand href="/" className="text-white">
+              TicketMaster
+            </Navbar.Brand>
+          </div>
+          <div>
+            <ConnectWallet />
+          </div>
+        </Container>
+      </Navbar>
+      <Container className="mt-5">
+        <Alert className="text-center">
+          <p>
+            Welcome to TicketMaster platform where users can buy tickets for
+            their favorite events.
+          </p>
+          <p className="mb-0">Connect wallet to start.</p>
+        </Alert>
       </Container>
-    </Navbar>
+    </>
   );
 }

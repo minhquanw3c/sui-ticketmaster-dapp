@@ -1,3 +1,5 @@
+import type { Abi } from "viem";
+
 const ticketMasterAbi = [
   {
     inputs: [],
@@ -675,7 +677,7 @@ const ticketMasterAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-];
+] as Abi;
 
 export const CONTRACT_ADDRESS =
   "0x0f896489f1173C6d2712E6871E192A6D615a53eF" as `0x${string}`;
