@@ -25,8 +25,11 @@ export default function Header() {
             >
               Create event
             </a>
-            <a href="/events" className="text-white text-decoration-none">
+            <a href="/events" className="text-white text-decoration-none me-3">
               Events
+            </a>
+            <a href="/tickets" className="text-white text-decoration-none">
+              Tickets
             </a>
           </div>
           <div className="d-flex align-items-center">

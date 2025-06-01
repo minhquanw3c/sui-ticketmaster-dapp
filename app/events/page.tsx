@@ -7,7 +7,7 @@ import { useAccount } from "wagmi";
 
 export default function Events() {
   const { events, loading, error } = useHeldEvents();
-  const isConnected = useAccount();
+  const { isConnected } = useAccount();
 
   if (!isConnected) {
     return <></>;

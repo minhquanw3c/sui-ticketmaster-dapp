@@ -6,9 +6,9 @@ import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
 import { useEffect, useState } from "react";
 import { ParsedEvent } from "@/app/types/ParsedEvent";
-import { formatEther } from "ethers";
+import { parseEther } from "ethers";
 import { useAccount } from "wagmi";
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Form } from "react-bootstrap";
 import { shortenAddress } from "@/app/util/string";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
 
@@ -17,6 +17,7 @@ export default function EventDetails() {
   const [eventDetails, setEventDetails] = useState<ParsedEvent | undefined>(
     undefined
   );
+  const [ticketNotes, setTicketNotes] = useState<string>("");
 
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { address, isConnected } = useAccount();
@@ -40,8 +41,8 @@ export default function EventDetails() {
       address: CONTRACT_ADDRESS,
       abi: ticketMasterAbi,
       functionName: "mintTicket",
-      args: [eventId],
-      value: BigInt(eventDetails!.price),
+      args: [eventId, ticketNotes],
+      value: parseEther(eventDetails!.price.toString()),
     });
   };
 
@@ -104,6 +105,18 @@ export default function EventDetails() {
               )}
             </li>
           </ul>
+
+          <Form.Group controlId="formTicketNotes" className="mb-3">
+            <Form.Label>Ticket Notes</Form.Label>
+            <Form.Control
+              name="ticketNotes"
+              onChange={(e) => {
+                setTicketNotes(e.target.value);
+              }}
+              placeholder="Your notes here..."
+              value={ticketNotes}
+            />
+          </Form.Group>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-end">
           <button
