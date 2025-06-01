@@ -119,13 +119,17 @@ export default function EventDetails() {
           </Form.Group>
         </Card.Body>
         <Card.Footer className="d-flex justify-content-end">
-          <button
-            className="btn btn-primary px-5"
-            onClick={mint}
-            disabled={isPending}
-          >
-            {isPending ? "Minting" : "Buy"}
-          </button>
+          {eventDetails.isActive ? (
+            <>
+              <button
+                className="btn btn-primary px-5"
+                onClick={mint}
+                disabled={isPending}
+              >
+                {isPending ? "Minting" : "Buy"}
+              </button>
+            </>
+          ) : null}
         </Card.Footer>
       </Card>
     </>
