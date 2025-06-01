@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Card, Form } from "react-bootstrap";
 import { useAccount, useWriteContract } from "wagmi";
 import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
@@ -90,92 +90,95 @@ export default function CreateEvent() {
         validated={validatedForm}
         method="POST"
       >
-        <h1 className="text-xl font-bold">Create Event</h1>
+        <Card>
+          <Card.Header>Create new event</Card.Header>
+          <Card.Body>
+            <Form.Group controlId="formName" className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                required
+                name="name"
+                onChange={(e) => handleChange(e)}
+                placeholder="Event Name"
+                value={form.name}
+              />
+              <Form.Control.Feedback type="invalid">
+                Name is required
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group controlId="formName" className="mb-3">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            required
-            name="name"
-            onChange={(e) => handleChange(e)}
-            placeholder="Event Name"
-            value={form.name}
-          />
-          <Form.Control.Feedback type="invalid">
-            Name is required
-          </Form.Control.Feedback>
-        </Form.Group>
+            <Form.Group controlId="formDescription" className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                required
+                name="description"
+                onChange={(e) => handleChange(e)}
+                placeholder="Description"
+                value={form.description}
+              />
+              <Form.Control.Feedback type="invalid">
+                Description is required
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group controlId="formDescription" className="mb-3">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            required
-            name="description"
-            onChange={(e) => handleChange(e)}
-            placeholder="Description"
-            value={form.description}
-          />
-          <Form.Control.Feedback type="invalid">
-            Description is required
-          </Form.Control.Feedback>
-        </Form.Group>
+            <Form.Group controlId="formDateTime" className="mb-3">
+              <Form.Label>Datetime</Form.Label>
+              <Form.Control
+                required
+                type="datetime-local"
+                name="dateTime"
+                onChange={(e) => handleChange(e)}
+                value={form.dateTime}
+              />
+              <Form.Control.Feedback type="invalid">
+                Datetime is required
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group controlId="formDateTime" className="mb-3">
-          <Form.Label>Datetime</Form.Label>
-          <Form.Control
-            required
-            type="datetime-local"
-            name="dateTime"
-            onChange={(e) => handleChange(e)}
-            value={form.dateTime}
-          />
-          <Form.Control.Feedback type="invalid">
-            Datetime is required
-          </Form.Control.Feedback>
-        </Form.Group>
+            <Form.Group controlId="formPrice" className="mb-3">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                required
+                type="number"
+                name="price"
+                onChange={(e) => handleChange(e)}
+                placeholder="Price"
+                min={0}
+                value={form.price}
+              />
+              <Form.Control.Feedback type="invalid">
+                Price is required
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group controlId="formPrice" className="mb-3">
-          <Form.Label>Price</Form.Label>
-          <Form.Control
-            required
-            type="number"
-            name="price"
-            onChange={(e) => handleChange(e)}
-            placeholder="Price"
-            min={0}
-            value={form.price}
-          />
-          <Form.Control.Feedback type="invalid">
-            Price is required
-          </Form.Control.Feedback>
-        </Form.Group>
+            <Form.Group controlId="formMaxTickets" className="mb-3">
+              <Form.Label>Max tickets</Form.Label>
+              <Form.Control
+                required
+                type="number"
+                name="maxTickets"
+                onChange={(e) => handleChange(e)}
+                placeholder="Max Tickets"
+                min={1}
+                value={form.maxTickets}
+              />
+              <Form.Control.Feedback type="invalid">
+                Max tickets is required
+              </Form.Control.Feedback>
+            </Form.Group>
 
-        <Form.Group controlId="formMaxTickets" className="mb-3">
-          <Form.Label>Max tickets</Form.Label>
-          <Form.Control
-            required
-            type="number"
-            name="maxTickets"
-            onChange={(e) => handleChange(e)}
-            placeholder="Max Tickets"
-            min={1}
-            value={form.maxTickets}
-          />
-          <Form.Control.Feedback type="invalid">
-            Max tickets is required
-          </Form.Control.Feedback>
-        </Form.Group>
-
-        <div className="d-flex justify-content-end mt-4">
-          <Button
-            onClick={(e) => handleSubmit(e)}
-            type="submit"
-            disabled={isPending}
-            className="px-4"
-          >
-            {isPending ? "Confirming..." : "Create event"}
-          </Button>
-        </div>
+            <div className="d-flex justify-content-end mt-4">
+              <Button
+                onClick={(e) => handleSubmit(e)}
+                type="submit"
+                disabled={isPending}
+                className="px-4"
+              >
+                {isPending ? "Confirming..." : "Create event"}
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
       </Form>
     </>
   );

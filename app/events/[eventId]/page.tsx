@@ -4,11 +4,12 @@ import { useParams } from "next/navigation";
 import { useReadContract, useWriteContract } from "wagmi";
 import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
-import type { Abi } from "viem";
 import { useEffect, useState } from "react";
 import { ParsedEvent } from "@/app/types/ParsedEvent";
-import { formatEther, parseEther } from "ethers";
+import { formatEther } from "ethers";
 import { useAccount } from "wagmi";
+import { Card, Badge } from "react-bootstrap";
+import { shortenAddress } from "@/app/util/string";
 
 export default function EventDetails() {
   const { eventId } = useParams();
@@ -81,24 +82,37 @@ export default function EventDetails() {
   }
 
   return (
-    <div className="container mt-4">
-      <h2>Event: {eventDetails.name}</h2>
-      <p>Description: {eventDetails.description}</p>
-      <p>
-        <strong>Date:</strong>{" "}
-        {new Date(eventDetails.dateTime * 1000).toLocaleString()}
-      </p>
-      <p>
-        <strong>Price:</strong> {formatEther(eventDetails.price)} ETH
-      </p>
-
-      <hr />
-
-      <h5>Buy a Ticket</h5>
-
-      <button className="btn btn-success" onClick={mint} disabled={isPending}>
-        {isPending ? "Minting" : "Buy"}
-      </button>
-    </div>
+    <>
+      <Card>
+        <Card.Header>Buy a ticket</Card.Header>
+        <Card.Body>
+          <ul>
+            <li>Event: {eventDetails.name}</li>
+            <li>Organizer: {shortenAddress(eventDetails.organizer)}</li>
+            <li>Name: {eventDetails.name}</li>
+            <li>Price per a ticket: {eventDetails.price}</li>
+            <li>Max tickets capacity: {eventDetails.maxTickets}</li>
+            <li>Tickets sold: {eventDetails.ticketsSold}</li>
+            <li>
+              Status:{" "}
+              {eventDetails.isActive ? (
+                <Badge bg="success">On going</Badge>
+              ) : (
+                <Badge bg="danger">Closed</Badge>
+              )}
+            </li>
+          </ul>
+        </Card.Body>
+        <Card.Footer>
+          <button
+            className="btn btn-primary px-4"
+            onClick={mint}
+            disabled={isPending}
+          >
+            {isPending ? "Minting" : "Buy"}
+          </button>
+        </Card.Footer>
+      </Card>
+    </>
   );
 }

@@ -23,10 +23,10 @@ export default function Header() {
               href="/events/create"
               className="me-3 text-white text-decoration-none"
             >
-              Create new event
+              Create event
             </a>
             <a href="/events" className="text-white text-decoration-none">
-              Held events
+              Events
             </a>
           </div>
           <div className="d-flex align-items-center">
