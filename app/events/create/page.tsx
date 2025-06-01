@@ -88,7 +88,6 @@ export default function CreateEvent() {
         onSubmit={(e) => handleSubmit(e)}
         noValidate
         validated={validatedForm}
-        method="POST"
       >
         <Card>
           <Card.Header>Create new event</Card.Header>
