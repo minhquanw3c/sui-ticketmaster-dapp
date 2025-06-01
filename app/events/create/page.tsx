@@ -8,19 +8,19 @@ import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
 
 interface Event {
-  name: string | undefined;
-  description: string | undefined;
+  name: string;
+  description: string;
   dateTime: string;
-  price: number | undefined;
-  maxTickets: number | undefined;
+  price: number;
+  maxTickets: number;
 }
 
 const intialState: Event = {
-  name: undefined,
-  description: undefined,
+  name: "",
+  description: "",
   dateTime: "",
-  price: undefined,
-  maxTickets: undefined,
+  price: 0,
+  maxTickets: 0,
 };
 
 export default function CreateEvent() {
@@ -29,7 +29,8 @@ export default function CreateEvent() {
     false
   );
 
-  const account = useAccount();
+  const { isConnected } = useAccount();
+
   const { data: hash, isPending, status, writeContract } = useWriteContract();
 
   const handleChange = (
@@ -75,6 +76,10 @@ export default function CreateEvent() {
     }
   };
 
+  if (!isConnected) {
+    return <></>;
+  }
+
   return (
     <>
       {isPending && <FullScreenLoader />}
@@ -83,6 +88,7 @@ export default function CreateEvent() {
         onSubmit={(e) => handleSubmit(e)}
         noValidate
         validated={validatedForm}
+        method="POST"
       >
         <h1 className="text-xl font-bold">Create Event</h1>
 

@@ -680,6 +680,6 @@ const ticketMasterAbi = [
 ] as Abi;
 
 export const CONTRACT_ADDRESS =
-  "0x0f896489f1173C6d2712E6871E192A6D615a53eF" as `0x${string}`;
+  "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9" as `0x${string}`;
 
 export default ticketMasterAbi;

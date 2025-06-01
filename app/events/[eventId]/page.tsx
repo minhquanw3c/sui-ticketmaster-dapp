@@ -8,25 +8,30 @@ import type { Abi } from "viem";
 import { useEffect, useState } from "react";
 import { ParsedEvent } from "@/app/types/ParsedEvent";
 import { formatEther, parseEther } from "ethers";
+import { useAccount } from "wagmi";
 
 export default function EventDetails() {
   const { eventId } = useParams();
   const [eventDetails, setEventDetails] = useState<ParsedEvent | undefined>(
     undefined
   );
-  const { data: hash, isPending, writeContract } = useWriteContract();
-  // const [form, setForm] = useState({ attendeeName: "" });
 
-  const { data: eventData, isLoading } = useReadContract({
-    address: CONTRACT_ADDRESS as `0x${string}`,
-    abi: ticketMasterAbi as Abi,
+  const { data: hash, isPending, writeContract } = useWriteContract();
+  const { address, isConnected } = useAccount();
+
+  const {
+    data: eventData,
+    isPending: isLoadingEvent,
+    error: errorOnFetch,
+  } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: ticketMasterAbi,
     functionName: "getEvent",
     args: [BigInt(eventId as string)],
+    query: {
+      enabled: !!address && isConnected,
+    },
   });
-
-  // const handleChange = (e: any) => {
-  //   setForm({ ...form, [e.target.name]: e.target.value });
-  // };
 
   const mint = async () => {
     writeContract({
@@ -66,8 +71,13 @@ export default function EventDetails() {
     }
   }, [eventData]);
 
-  if (!eventDetails || isLoading) {
+  if (isLoadingEvent) {
     return <>Loading...</>;
+  }
+
+  if (errorOnFetch || !eventDetails) {
+    console.log(errorOnFetch);
+    return <>Error</>;
   }
 
   return (
@@ -85,14 +95,7 @@ export default function EventDetails() {
       <hr />
 
       <h5>Buy a Ticket</h5>
-      {/* <input
-        type="text"
-        name="attendeeName"
-        value={form.attendeeName}
-        onChange={handleChange}
-        placeholder="Enter attendee name"
-        className="form-control mb-3"
-      /> */}
+
       <button className="btn btn-success" onClick={mint} disabled={isPending}>
         {isPending ? "Minting" : "Buy"}
       </button>

@@ -4,10 +4,21 @@ import { CONTRACT_ADDRESS } from "./../abi/TicketMaster";
 import { ParsedEvent } from "../types/ParsedEvent";
 import { useEffect } from "react";
 
-export function useHeldEvents() {
-  const { address } = useAccount();
+export type EventDetailsReturned = [
+  bigint,
+  string,
+  string,
+  string,
+  bigint,
+  bigint,
+  bigint,
+  bigint,
+  boolean
+];
 
-  // 1. Fetch event IDs for this organizer
+export function useHeldEvents() {
+  const { address, isConnected } = useAccount();
+
   const {
     data: eventIdsData,
     isLoading: isFetchingEventIds,
@@ -17,72 +28,66 @@ export function useHeldEvents() {
     abi: ticketMasterAbi,
     functionName: "getEventIdsByOrganizer",
     args: [address],
+    query: {
+      enabled: !!address && isConnected,
+    },
   });
 
-  const eventIds = eventIdsData as bigint[] | undefined;
+  const eventIds = (eventIdsData as bigint[]) || [];
   const shouldFetchEvents = eventIds && eventIds.length > 0;
 
   useEffect(() => {
     console.log(eventIdsData);
   }, [eventIdsData]);
 
-  // 2. Fetch each event’s details
   const {
     data: eventsList,
     isLoading: isFetchingEvents,
     error: fetchEventsError,
   } = useReadContracts({
-    contracts: shouldFetchEvents
-      ? eventIds.map((id) => ({
-          address: CONTRACT_ADDRESS,
-          abi: ticketMasterAbi,
-          functionName: "getEvent",
-          args: [id],
-        }))
-      : [],
+    contracts: eventIds.map((id) => ({
+      address: CONTRACT_ADDRESS,
+      abi: ticketMasterAbi,
+      functionName: "getEvent",
+      args: [id],
+    })),
     allowFailure: false,
+    query: {
+      enabled: !!address && isConnected && shouldFetchEvents,
+    },
   });
 
-  // 3. Parse data
-  const parsedEvents: ParsedEvent[] = (
-    (eventsList as Array<{ status: "success"; result: unknown }>) ?? []
-  )
-    .filter((e) => e.status === "success")
-    .map((event) => {
-      const [
-        id,
-        organizer,
-        name,
-        description,
-        dateTime,
-        price,
-        maxTickets,
-        ticketsSold,
-        isActive,
-      ] = event.result as [
-        bigint,
-        string,
-        string,
-        string,
-        bigint,
-        bigint,
-        bigint,
-        bigint,
-        boolean
-      ];
+  useEffect(() => {
+    console.log(eventsList);
+  }, [eventsList]);
 
-      return {
-        id: Number(id),
-        organizer,
-        name,
-        description,
-        dateTime: Number(dateTime),
-        price: Number(price) / 1e18,
-        maxTickets: Number(maxTickets),
-        ticketsSold: Number(ticketsSold),
-        isActive,
-      };
-    });
+  const returnedEvents = (eventsList as Array<EventDetailsReturned>) || [];
+
+  const parsedEvents = returnedEvents.map((event) => {
+    const [
+      id,
+      organizer,
+      name,
+      description,
+      dateTime,
+      price,
+      maxTickets,
+      ticketsSold,
+      isActive,
+    ] = event;
+
+    return {
+      id: Number(id),
+      organizer,
+      name,
+      description,
+      dateTime: Number(dateTime),
+      price: Number(price) / 1e18,
+      maxTickets: Number(maxTickets),
+      ticketsSold: Number(ticketsSold),
+      isActive,
+    };
+  });
 
   return {
     events: parsedEvents,
