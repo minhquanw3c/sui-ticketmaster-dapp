@@ -21,19 +21,19 @@ export default function Header() {
               TicketMaster
             </Navbar.Brand>
             <Link
-              href="events/create"
+              href="/events/create"
               className="me-3 text-white text-decoration-none"
             >
               Create event
             </Link>
             <Link
-              href="events"
+              href="/events"
               className="me-3 text-white text-decoration-none"
             >
               Events
             </Link>
             <Link
-              href="tickets"
+              href="/tickets"
               className="me-3 text-white text-decoration-none"
             >
               Tickets
