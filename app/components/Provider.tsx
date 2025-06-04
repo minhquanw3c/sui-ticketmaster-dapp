@@ -3,7 +3,7 @@
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { http, createConfig } from "wagmi";
-import { sepolia, mainnet } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import { metaMask } from "wagmi/connectors";
 import { defineChain } from "viem";
 
@@ -19,11 +19,10 @@ export const anvil = defineChain({
 });
 
 const config = createConfig({
-  chains: [sepolia, mainnet, anvil],
+  chains: [sepolia, anvil],
   connectors: [metaMask()],
   transports: {
     [sepolia.id]: http(),
-    [mainnet.id]: http(),
     [anvil.id]: http(),
   },
 });
