@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Button, Card, Form } from "react-bootstrap";
+import { useRef, useState } from "react";
+import { Button, Card, Form, Toast } from "react-bootstrap";
 import { useAccount, useWriteContract } from "wagmi";
 import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
@@ -15,7 +15,7 @@ interface Event {
   maxTickets: number;
 }
 
-const intialState: Event = {
+export const intialState: Event = {
   name: "",
   description: "",
   dateTime: "",
@@ -28,10 +28,17 @@ export default function CreateEvent() {
   const [validatedForm, setValidatedForm] = useState<boolean | undefined>(
     false
   );
+  const [showToast, setShowToast] = useState<boolean>(false);
+  const formContainer = useRef<HTMLFormElement | null>(null);
 
   const { isConnected } = useAccount();
 
-  const { data: hash, isPending, status, writeContract } = useWriteContract();
+  const {
+    data: hash,
+    isPending,
+    isSuccess,
+    writeContract,
+  } = useWriteContract();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -45,9 +52,9 @@ export default function CreateEvent() {
     e.preventDefault();
     e.stopPropagation();
 
-    const formInputs = e.currentTarget;
-    
-    if (formInputs.checkValidity() === false) {
+    const formInputs = formContainer.current;
+
+    if (formInputs && formInputs.checkValidity() === false) {
       setValidatedForm(true);
       return;
     }
@@ -55,6 +62,8 @@ export default function CreateEvent() {
     console.log(form);
 
     createEvent(form);
+    setForm({ ...intialState });
+    setValidatedForm(false);
   };
 
   const createEvent = async (payload: Event) => {
@@ -84,7 +93,19 @@ export default function CreateEvent() {
 
   return (
     <>
-      {isPending && <FullScreenLoader />}
+      {isPending && !isSuccess && <FullScreenLoader />}
+      {isSuccess && (
+        <Toast
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+          bg="success"
+        >
+          <Toast.Header>Notice</Toast.Header>
+          <Toast.Body>Contract created</Toast.Body>
+        </Toast>
+      )}
 
       <h3>
         <p>Create new event</p>
@@ -95,6 +116,7 @@ export default function CreateEvent() {
         onSubmit={(e) => handleSubmit(e)}
         noValidate
         validated={validatedForm}
+        ref={formContainer}
       >
         <Card>
           <Card.Header>Create new event</Card.Header>

@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, Row, Col, Badge, Alert } from "react-bootstrap";
-import { useHeldEvents } from "../hooks/useHeldEvents";
 import { shortenAddress } from "../util/string";
 import { useAccount } from "wagmi";
+import { useBrowseEvents } from "../hooks/useBrowseEvents";
 
 export default function Events() {
-  const { events, loading, error } = useHeldEvents();
+  const { events, loading, error } = useBrowseEvents();
   const { isConnected } = useAccount();
 
   if (!isConnected) {
@@ -15,12 +15,8 @@ export default function Events() {
 
   if (loading) return <div>Loading...</div>;
 
-  if (error && error.fetchEventIdsError) {
-    return <>{error.fetchEventIdsError.cause.name}</>;
-  }
-
   if (error && error.fetchEventsError) {
-    return <>{error.fetchEventsError.cause}</>;
+    return <>{error.fetchEventsError.cause.name}</>;
   }
 
   if (events.length === 0) {
@@ -32,7 +28,7 @@ export default function Events() {
       <Row>
         <Col xs="12">
           <h3>
-            <p>Your created events</p>
+            <p>Members public event</p>
           </h3>
         </Col>
 
