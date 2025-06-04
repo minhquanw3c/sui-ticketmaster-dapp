@@ -10,4 +10,4 @@ Get some testnet tokens from faucets for gas fee at url: https://cloud.google.co
 
 Linked smart contract written in Solidty at url: https://github.com/minhquanw3c/sui-ticketmaster-smart-contract
 
-Deploy contract at url: https://sepolia.etherscan.io/address/0x03c7725245fd116ffffac89c5e518fed28dee499
+Deploy contract at url: https://sepolia.etherscan.io/address/0xafd9642c36ab056a26d0eb638a7420c88024e29f

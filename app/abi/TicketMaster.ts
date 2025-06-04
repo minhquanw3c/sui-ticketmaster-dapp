@@ -47,6 +47,50 @@ const ticketMasterAbi = [
   },
   {
     type: "function",
+    name: "getAllEvents",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "tuple[]",
+        internalType: "struct TicketMaster.Event[]",
+        components: [
+          { name: "id", type: "uint256", internalType: "uint256" },
+          {
+            name: "organizer",
+            type: "address",
+            internalType: "address payable",
+          },
+          { name: "name", type: "string", internalType: "string" },
+          {
+            name: "description",
+            type: "string",
+            internalType: "string",
+          },
+          {
+            name: "dateTime",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "price", type: "uint256", internalType: "uint256" },
+          {
+            name: "maxTickets",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          {
+            name: "ticketsSold",
+            type: "uint256",
+            internalType: "uint256",
+          },
+          { name: "isActive", type: "bool", internalType: "bool" },
+        ],
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "getBoughtTickets",
     inputs: [{ name: "buyer", type: "address", internalType: "address" }],
     outputs: [{ name: "", type: "uint256[]", internalType: "uint256[]" }],
@@ -127,9 +171,16 @@ const ticketMasterAbi = [
     outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
     stateMutability: "view",
   },
+  {
+    type: "function",
+    name: "totalEventsCount",
+    inputs: [],
+    outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+    stateMutability: "view",
+  },
 ] as Abi;
 
 export const CONTRACT_ADDRESS =
-  "0x03C7725245fD116ffFFAc89C5E518FeD28dEe499" as `0x${string}`;
+  "0xafd9642c36ab056a26d0eb638a7420c88024e29f" as `0x${string}`;
 
 export default ticketMasterAbi;
