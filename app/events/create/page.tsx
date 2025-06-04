@@ -15,7 +15,7 @@ interface Event {
   maxTickets: number;
 }
 
-export const intialState: Event = {
+const intialState: Event = {
   name: "",
   description: "",
   dateTime: "",
