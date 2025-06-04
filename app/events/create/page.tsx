@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Button, Card, Form, Toast } from "react-bootstrap";
-import { useAccount, useWriteContract } from "wagmi";
+import { Button, Card, Form, Toast, ToastContainer } from "react-bootstrap";
+import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
@@ -28,7 +28,10 @@ export default function CreateEvent() {
   const [validatedForm, setValidatedForm] = useState<boolean | undefined>(
     false
   );
+  const [showLoading, setShowLoading] = useState<boolean>(false);
   const [showToast, setShowToast] = useState<boolean>(false);
+  const [toastVariant, setToastVariant] = useState<string>("");
+
   const formContainer = useRef<HTMLFormElement | null>(null);
 
   const { isConnected } = useAccount();
@@ -38,7 +41,10 @@ export default function CreateEvent() {
     isPending,
     isSuccess,
     writeContract,
+    writeContractAsync,
   } = useWriteContract();
+
+  const publicClient = usePublicClient();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -49,28 +55,37 @@ export default function CreateEvent() {
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
-    e.preventDefault();
-    e.stopPropagation();
+    try {
+      e.preventDefault();
+      e.stopPropagation();
+      setShowLoading(true);
 
-    const formInputs = formContainer.current;
+      const formInputs = formContainer.current;
 
-    if (formInputs && formInputs.checkValidity() === false) {
-      setValidatedForm(true);
-      return;
+      if (formInputs && formInputs.checkValidity() === false) {
+        setValidatedForm(true);
+        setShowLoading(false);
+        return;
+      }
+
+      const hasCreatedEvent = await createEvent(form);
+
+      setToastVariant(hasCreatedEvent ? "success" : "danger");
+      setForm({ ...intialState });
+    } catch (err) {
+      setToastVariant("danger");
+    } finally {
+      setShowLoading(false);
+      setValidatedForm(false);
+      setShowToast(true);
     }
-
-    console.log(form);
-
-    createEvent(form);
-    setForm({ ...intialState });
-    setValidatedForm(false);
   };
 
-  const createEvent = async (payload: Event) => {
+  const createEvent = async (payload: Event): Promise<boolean> => {
     try {
       const now = Math.floor(new Date(form.dateTime).getTime() / 1000);
 
-      writeContract({
+      const txHash = await writeContractAsync({
         address: CONTRACT_ADDRESS,
         abi: ticketMasterAbi,
         functionName: "createEvent",
@@ -82,8 +97,15 @@ export default function CreateEvent() {
           payload.maxTickets,
         ],
       });
+
+      const receipt = await publicClient?.waitForTransactionReceipt({
+        hash: txHash,
+      });
+
+      return Promise.resolve(true);
     } catch (err) {
       console.error(err);
+      return Promise.reject(false);
     }
   };
 
@@ -93,18 +115,30 @@ export default function CreateEvent() {
 
   return (
     <>
-      {isPending && !isSuccess && <FullScreenLoader />}
-      {isSuccess && (
-        <Toast
-          onClose={() => setShowToast(false)}
-          show={showToast}
-          delay={3000}
-          autohide
-          bg="success"
-        >
-          <Toast.Header>Notice</Toast.Header>
-          <Toast.Body>Contract created</Toast.Body>
-        </Toast>
+      {showLoading && <FullScreenLoader />}
+      {showToast && (
+        <ToastContainer position={"top-end"} className="p-3">
+          <Toast
+            onClose={() => {
+              setShowToast(false);
+              setToastVariant("");
+            }}
+            show={showToast}
+            delay={3000}
+            autohide
+          >
+            <Toast.Header
+              className={`text-white justify-content-between ${
+                toastVariant === "success" ? "bg-success" : "bg-danger"
+              }`}
+            >
+              Notice
+            </Toast.Header>
+            <Toast.Body>
+              {toastVariant === "success" ? "Event created" : "Error occurred"}
+            </Toast.Body>
+          </Toast>
+        </ToastContainer>
       )}
 
       <h3>
