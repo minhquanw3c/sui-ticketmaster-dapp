@@ -42,10 +42,12 @@ export default function CreateEvent() {
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
   ) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const formInputs = e.currentTarget;
+    
     if (formInputs.checkValidity() === false) {
-      e.preventDefault();
-      e.stopPropagation();
       setValidatedForm(true);
       return;
     }
@@ -83,8 +85,13 @@ export default function CreateEvent() {
   return (
     <>
       {isPending && <FullScreenLoader />}
+
+      <h3>
+        <p>Create new event</p>
+      </h3>
+
       <Form
-        className="p-4 container"
+        className="container px-0"
         onSubmit={(e) => handleSubmit(e)}
         noValidate
         validated={validatedForm}

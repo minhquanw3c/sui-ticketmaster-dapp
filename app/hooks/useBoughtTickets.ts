@@ -25,10 +25,6 @@ export function useBoughtTickets() {
   const ticketIds = (ticketIdsData as bigint[]) || [];
   const shouldFetchTickets = ticketIds && ticketIds.length > 0;
 
-  useEffect(() => {
-    console.log(ticketIdsData);
-  }, [ticketIdsData]);
-
   const {
     data: ticketsList,
     isLoading: isFetchingTickets,
@@ -46,10 +42,6 @@ export function useBoughtTickets() {
     },
   });
 
-  useEffect(() => {
-    console.log(ticketsList);
-  }, [ticketsList]);
-
   const returnedTickets = (ticketsList as Array<TicketDetailsReturned>) || [];
 
   const parsedTickets = returnedTickets.map((ticket) => {
@@ -66,6 +58,6 @@ export function useBoughtTickets() {
   return {
     tickets: parsedTickets,
     loading: isFetchingTicketIds || isFetchingTickets,
-    error: (fetchTicketIdsError || fetchTicketsError) as any,
+    error: { fetchTicketIdsError, fetchTicketsError },
   };
 }

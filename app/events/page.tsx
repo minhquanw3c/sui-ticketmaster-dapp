@@ -15,8 +15,12 @@ export default function Events() {
 
   if (loading) return <div>Loading...</div>;
 
-  if (error) {
-    return <div>error occurred</div>;
+  if (error && error.fetchEventIdsError) {
+    return <>{error.fetchEventIdsError.cause.name}</>
+  }
+
+  if (error && error.fetchEventsError) {
+    return <>{error.fetchEventsError.cause}</>
   }
 
   if (events.length === 0) {
@@ -26,9 +30,11 @@ export default function Events() {
   return (
     <>
       <Row>
+        <Col xs="12"><h3><p>Your created events</p></h3></Col>
+        
         {events.map((event) => {
           return (
-            <Col sm="12" md="4">
+            <Col sm="12" md="4" key={event.id}>
               <a href={`/events/${event.id}`} className="text-decoration-none">
                 <Card>
                   <Card.Header>Event: {event.name}</Card.Header>

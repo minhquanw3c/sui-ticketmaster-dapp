@@ -36,10 +36,6 @@ export function useHeldEvents() {
   const eventIds = (eventIdsData as bigint[]) || [];
   const shouldFetchEvents = eventIds && eventIds.length > 0;
 
-  useEffect(() => {
-    console.log(eventIdsData);
-  }, [eventIdsData]);
-
   const {
     data: eventsList,
     isLoading: isFetchingEvents,
@@ -56,10 +52,6 @@ export function useHeldEvents() {
       enabled: !!address && isConnected && shouldFetchEvents,
     },
   });
-
-  useEffect(() => {
-    console.log(eventsList);
-  }, [eventsList]);
 
   const returnedEvents = (eventsList as Array<EventDetailsReturned>) || [];
 
@@ -92,6 +84,6 @@ export function useHeldEvents() {
   return {
     events: parsedEvents,
     loading: isFetchingEventIds || isFetchingEvents,
-    error: (fetchEventIdsError || fetchEventsError) as any,
+    error: { fetchEventIdsError, fetchEventsError },
   };
 }

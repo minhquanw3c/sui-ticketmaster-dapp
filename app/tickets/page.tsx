@@ -15,8 +15,12 @@ export default function Tickets() {
 
   if (loading) return <div>Loading...</div>;
 
-  if (error) {
-    return <div>error occurred</div>;
+  if (error && error.fetchTicketIdsError) {
+    return <>{error.fetchTicketIdsError.cause.name}</>;
+  }
+
+  if (error && error.fetchTicketsError) {
+    return <>{error.fetchTicketsError.cause}</>;
   }
 
   if (tickets.length === 0) {
@@ -26,6 +30,18 @@ export default function Tickets() {
   return (
     <>
       <Row>
+        <Col xs="12">
+          <h3>
+            <p>Your purchased tickets</p>
+          </h3>
+        </Col>
+
+        {tickets.length === 0 && (
+          <>
+            <Alert role="info">No tickets found.</Alert>
+          </>
+        )}
+
         {tickets.map((ticket) => {
           return (
             <Col sm="12" md="4">

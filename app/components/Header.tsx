@@ -17,26 +17,36 @@ export default function Header() {
       <Navbar className="justify-content-between bg-dark" variant="dark">
         <Container>
           <div>
-            <Navbar.Brand href="/" className="text-white">
+            <Navbar.Brand href="/" className="text-white me-5">
               TicketMaster
             </Navbar.Brand>
             <Link
               href="/events/create"
               className="me-3 text-white text-decoration-none"
+              title="Create your new event by filling out form"
             >
-              Create event
+              Create
             </Link>
             <Link
               href="/events"
               className="me-3 text-white text-decoration-none"
+              title="View your created events"
             >
               Events
             </Link>
             <Link
               href="/tickets"
               className="me-3 text-white text-decoration-none"
+              title="View your purchased tickets"
             >
               Tickets
+            </Link>
+            <Link
+              href="/browse"
+              className="me-3 text-white text-decoration-none"
+              title="Buy tickets from others events"
+            >
+              Browse
             </Link>
           </div>
           <div className="d-flex align-items-center">
