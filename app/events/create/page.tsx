@@ -10,6 +10,7 @@ import {
 	RELOAD_CURRENT_PAGE_AFTER_SECONDS,
 	SHOW_TOAST_DURATION_SECONDS,
 } from "@/app/config/timer";
+import ToastNotification from "@/app/components/ToastNotification";
 
 interface Event {
 	name: string;
@@ -127,32 +128,14 @@ export default function CreateEvent() {
 		<>
 			{showLoading && <FullScreenLoader />}
 			{showToast && (
-				<ToastContainer position={"top-end"} className="p-3">
-					<Toast
-						onClose={() => {
-							setShowToast(false);
-							setToastVariant("");
-						}}
-						show={showToast}
-						delay={SHOW_TOAST_DURATION_SECONDS}
-						autohide
-					>
-						<Toast.Header
-							className={`text-white justify-content-between ${
-								toastVariant === "success"
-									? "bg-success"
-									: "bg-danger"
-							}`}
-						>
-							Notice
-						</Toast.Header>
-						<Toast.Body>
-							{toastVariant === "success"
-								? "Event created"
-								: "Error occurred"}
-						</Toast.Body>
-					</Toast>
-				</ToastContainer>
+				<ToastNotification
+					isEnabled={showToast}
+					variant={toastVariant}
+					onCloseToast={() => {
+						setShowToast(false);
+						setToastVariant("");
+					}}
+				/>
 			)}
 
 			<h3>
