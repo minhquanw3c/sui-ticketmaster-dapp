@@ -7,19 +7,29 @@ import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
 import { useEffect, useState } from "react";
 import { ParsedEvent } from "@/app/types/ParsedEvent";
 import { parseEther } from "ethers";
-import { useAccount } from "wagmi";
-import { Card, Badge, Form } from "react-bootstrap";
+import { useAccount, usePublicClient } from "wagmi";
+import { Card, Badge, Form, Toast, ToastContainer } from "react-bootstrap";
 import { shortenAddress } from "@/app/util/string";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
+import {
+	RELOAD_CURRENT_PAGE_AFTER_SECONDS,
+	SHOW_TOAST_DURATION_SECONDS,
+} from "@/app/config/timer";
 
 export default function EventDetails() {
 	const { eventId } = useParams();
 	const [eventDetails, setEventDetails] = useState<ParsedEvent | undefined>(
 		undefined
 	);
-	const [ticketNotes, setTicketNotes] = useState<string>("");
 
-	const { data: hash, isPending, writeContract } = useWriteContract();
+	const [showLoading, setShowLoading] = useState<boolean>(false);
+	const [showToast, setShowToast] = useState<boolean>(false);
+	const [toastVariant, setToastVariant] = useState<string>("");
+
+	const [ticketNotes, setTicketNotes] = useState<string>("");
+	const publicClient = usePublicClient();
+
+	const { data: hash, isPending, writeContractAsync } = useWriteContract();
 	const { address, isConnected } = useAccount();
 
 	const {
@@ -36,14 +46,45 @@ export default function EventDetails() {
 		},
 	});
 
-	const mint = async () => {
-		writeContract({
-			address: CONTRACT_ADDRESS,
-			abi: ticketMasterAbi,
-			functionName: "mintTicket",
-			args: [eventId, ticketNotes],
-			value: parseEther(eventDetails!.price.toString()),
-		});
+	const mint = async (): Promise<boolean> => {
+		try {
+			const txHash = await writeContractAsync({
+				address: CONTRACT_ADDRESS,
+				abi: ticketMasterAbi,
+				functionName: "mintTicket",
+				args: [eventId, ticketNotes],
+				value: parseEther(eventDetails!.price.toString()),
+			});
+
+			const receipt = await publicClient?.waitForTransactionReceipt({
+				hash: txHash,
+			});
+
+			return Promise.resolve(true);
+		} catch (err) {
+			console.error(err);
+			return Promise.reject(false);
+		}
+	};
+
+	const onBuyTicket = async () => {
+		try {
+			setShowLoading(true);
+
+			const hasPurchasedTicket = await mint();
+
+			setToastVariant(hasPurchasedTicket ? "success" : "danger");
+		} catch (err) {
+			console.error(err);
+			setToastVariant("danger");
+		} finally {
+			setShowLoading(false);
+			setShowToast(true);
+
+			setTimeout(() => {
+				window.location.reload();
+			}, RELOAD_CURRENT_PAGE_AFTER_SECONDS);
+		}
 	};
 
 	useEffect(() => {
@@ -85,7 +126,40 @@ export default function EventDetails() {
 
 	return (
 		<>
-			{isPending && <FullScreenLoader />}
+			{showLoading && <FullScreenLoader />}
+			{showToast && (
+				<ToastContainer position={"top-end"} className="p-3">
+					<Toast
+						onClose={() => {
+							setShowToast(false);
+							setToastVariant("");
+						}}
+						show={showToast}
+						delay={SHOW_TOAST_DURATION_SECONDS}
+						autohide
+					>
+						<Toast.Header
+							className={`text-white justify-content-between ${
+								toastVariant === "success"
+									? "bg-success"
+									: "bg-danger"
+							}`}
+						>
+							Notice
+						</Toast.Header>
+						<Toast.Body>
+							{toastVariant === "success"
+								? "Ticket purchased"
+								: "Error occurred"}
+						</Toast.Body>
+					</Toast>
+				</ToastContainer>
+			)}
+
+			<h3>
+				<p>Buy event ticket</p>
+			</h3>
+
 			<Card>
 				<Card.Header>Buy a ticket</Card.Header>
 				<Card.Body>
@@ -125,7 +199,7 @@ export default function EventDetails() {
 						<>
 							<button
 								className="btn btn-primary px-5"
-								onClick={mint}
+								onClick={onBuyTicket}
 								disabled={isPending}
 							>
 								{isPending ? "Minting" : "Buy"}

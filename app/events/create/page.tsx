@@ -6,6 +6,10 @@ import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import ticketMasterAbi from "@/app/abi/TicketMaster";
 import { CONTRACT_ADDRESS } from "@/app/abi/TicketMaster";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
+import {
+	RELOAD_CURRENT_PAGE_AFTER_SECONDS,
+	SHOW_TOAST_DURATION_SECONDS,
+} from "@/app/config/timer";
 
 interface Event {
 	name: string;
@@ -80,6 +84,10 @@ export default function CreateEvent() {
 			setShowLoading(false);
 			setValidatedForm(false);
 			setShowToast(true);
+
+			setTimeout(() => {
+				window.location.reload();
+			}, RELOAD_CURRENT_PAGE_AFTER_SECONDS);
 		}
 	};
 
@@ -126,7 +134,7 @@ export default function CreateEvent() {
 							setToastVariant("");
 						}}
 						show={showToast}
-						delay={3000}
+						delay={SHOW_TOAST_DURATION_SECONDS}
 						autohide
 					>
 						<Toast.Header
