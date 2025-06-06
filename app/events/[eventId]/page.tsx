@@ -13,125 +13,127 @@ import { shortenAddress } from "@/app/util/string";
 import FullScreenLoader from "@/app/components/FullScreenLoader";
 
 export default function EventDetails() {
-  const { eventId } = useParams();
-  const [eventDetails, setEventDetails] = useState<ParsedEvent | undefined>(
-    undefined
-  );
-  const [ticketNotes, setTicketNotes] = useState<string>("");
+	const { eventId } = useParams();
+	const [eventDetails, setEventDetails] = useState<ParsedEvent | undefined>(
+		undefined
+	);
+	const [ticketNotes, setTicketNotes] = useState<string>("");
 
-  const { data: hash, isPending, writeContract } = useWriteContract();
-  const { address, isConnected } = useAccount();
+	const { data: hash, isPending, writeContract } = useWriteContract();
+	const { address, isConnected } = useAccount();
 
-  const {
-    data: eventData,
-    isPending: isLoadingEvent,
-    error: errorOnFetch,
-  } = useReadContract({
-    address: CONTRACT_ADDRESS,
-    abi: ticketMasterAbi,
-    functionName: "getEvent",
-    args: [BigInt(eventId as string)],
-    query: {
-      enabled: !!address && isConnected,
-    },
-  });
+	const {
+		data: eventData,
+		isPending: isLoadingEvent,
+		error: errorOnFetch,
+	} = useReadContract({
+		address: CONTRACT_ADDRESS,
+		abi: ticketMasterAbi,
+		functionName: "getEvent",
+		args: [BigInt(eventId as string)],
+		query: {
+			enabled: !!address && isConnected,
+		},
+	});
 
-  const mint = async () => {
-    writeContract({
-      address: CONTRACT_ADDRESS,
-      abi: ticketMasterAbi,
-      functionName: "mintTicket",
-      args: [eventId, ticketNotes],
-      value: parseEther(eventDetails!.price.toString()),
-    });
-  };
+	const mint = async () => {
+		writeContract({
+			address: CONTRACT_ADDRESS,
+			abi: ticketMasterAbi,
+			functionName: "mintTicket",
+			args: [eventId, ticketNotes],
+			value: parseEther(eventDetails!.price.toString()),
+		});
+	};
 
-  useEffect(() => {
-    if (eventData) {
-      const [
-        id,
-        organizer,
-        name,
-        description,
-        dateTime,
-        price,
-        maxTickets,
-        ticketsSold,
-        isActive,
-      ] = eventData as any[];
+	useEffect(() => {
+		if (eventData) {
+			const [
+				id,
+				organizer,
+				name,
+				description,
+				dateTime,
+				price,
+				maxTickets,
+				ticketsSold,
+				isActive,
+			] = eventData as any[];
 
-      setEventDetails({
-        id: Number(id),
-        organizer,
-        name,
-        description,
-        dateTime: Number(dateTime),
-        price: Number(price),
-        maxTickets: Number(maxTickets),
-        ticketsSold: Number(ticketsSold),
-        isActive,
-      });
-    }
-  }, [eventData]);
+			setEventDetails({
+				id: Number(id),
+				organizer,
+				name,
+				description,
+				dateTime: Number(dateTime),
+				price: Number(price),
+				maxTickets: Number(maxTickets),
+				ticketsSold: Number(ticketsSold),
+				isActive,
+			});
+		}
+	}, [eventData]);
 
-  if (isLoadingEvent) {
-    return <>Loading...</>;
-  }
+	if (isLoadingEvent) {
+		return <>Loading...</>;
+	}
 
-  if (errorOnFetch || !eventDetails) {
-    console.log(errorOnFetch);
-    return <>Error</>;
-  }
+	if (errorOnFetch || !eventDetails) {
+		console.log(errorOnFetch);
+		return <>Error</>;
+	}
 
-  return (
-    <>
-      {isPending && <FullScreenLoader />}
-      <Card>
-        <Card.Header>Buy a ticket</Card.Header>
-        <Card.Body>
-          <ul>
-            <li>Event: {eventDetails.name}</li>
-            <li>Organizer: {shortenAddress(eventDetails.organizer)}</li>
-            <li>Name: {eventDetails.name}</li>
-            <li>Price per a ticket: {eventDetails.price}</li>
-            <li>Max tickets capacity: {eventDetails.maxTickets}</li>
-            <li>Tickets sold: {eventDetails.ticketsSold}</li>
-            <li>
-              Status:{" "}
-              {eventDetails.isActive ? (
-                <Badge bg="success">On going</Badge>
-              ) : (
-                <Badge bg="danger">Closed</Badge>
-              )}
-            </li>
-          </ul>
+	return (
+		<>
+			{isPending && <FullScreenLoader />}
+			<Card>
+				<Card.Header>Buy a ticket</Card.Header>
+				<Card.Body>
+					<ul>
+						<li>Event: {eventDetails.name}</li>
+						<li>
+							Organizer: {shortenAddress(eventDetails.organizer)}
+						</li>
+						<li>Name: {eventDetails.name}</li>
+						<li>Price per a ticket: {eventDetails.price}</li>
+						<li>Max tickets capacity: {eventDetails.maxTickets}</li>
+						<li>Tickets sold: {eventDetails.ticketsSold}</li>
+						<li>
+							Status:{" "}
+							{eventDetails.isActive ? (
+								<Badge bg="success">On going</Badge>
+							) : (
+								<Badge bg="danger">Closed</Badge>
+							)}
+						</li>
+					</ul>
 
-          <Form.Group controlId="formTicketNotes" className="mb-3">
-            <Form.Label>Ticket Notes</Form.Label>
-            <Form.Control
-              name="ticketNotes"
-              onChange={(e) => {
-                setTicketNotes(e.target.value);
-              }}
-              placeholder="Your notes here..."
-              value={ticketNotes}
-            />
-          </Form.Group>
-        </Card.Body>
-        <Card.Footer className="d-flex justify-content-end">
-          {eventDetails.isActive ? (
-            <>
-              <button
-                className="btn btn-primary px-5"
-                onClick={mint}
-                disabled={isPending}
-              >
-                {isPending ? "Minting" : "Buy"}
-              </button>
-            </>
-          ) : null}
-        </Card.Footer>
-      </Card>
-    </>
-  );
+					<Form.Group controlId="formTicketNotes" className="mb-3">
+						<Form.Label>Ticket Notes</Form.Label>
+						<Form.Control
+							name="ticketNotes"
+							onChange={(e) => {
+								setTicketNotes(e.target.value);
+							}}
+							placeholder="Your notes here..."
+							value={ticketNotes}
+						/>
+					</Form.Group>
+				</Card.Body>
+				<Card.Footer className="d-flex justify-content-end">
+					{eventDetails.isActive ? (
+						<>
+							<button
+								className="btn btn-primary px-5"
+								onClick={mint}
+								disabled={isPending}
+							>
+								{isPending ? "Minting" : "Buy"}
+							</button>
+						</>
+					) : null}
+				</Card.Footer>
+			</Card>
+		</>
+	);
 }
