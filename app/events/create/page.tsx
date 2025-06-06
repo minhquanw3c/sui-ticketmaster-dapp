@@ -62,14 +62,18 @@ export default function CreateEvent() {
 			| React.FormEvent<HTMLFormElement>
 			| React.MouseEvent<HTMLButtonElement>
 	) => {
+		let isFormValid = null;
+
 		try {
 			e.preventDefault();
 			e.stopPropagation();
 			setShowLoading(true);
+			console.log(`hello world`);
 
 			const formInputs = formContainer.current;
+			isFormValid = formInputs && formInputs.checkValidity();
 
-			if (formInputs && formInputs.checkValidity() === false) {
+			if (!isFormValid) {
 				setValidatedForm(true);
 				setShowLoading(false);
 				return;
@@ -83,12 +87,14 @@ export default function CreateEvent() {
 			setToastVariant("danger");
 		} finally {
 			setShowLoading(false);
-			setValidatedForm(false);
 			setShowToast(true);
 
-			setTimeout(() => {
-				window.location.reload();
-			}, RELOAD_CURRENT_PAGE_AFTER_SECONDS);
+			if (isFormValid) {
+				setValidatedForm(false);
+				setTimeout(() => {
+					window.location.reload();
+				}, RELOAD_CURRENT_PAGE_AFTER_SECONDS);
+			}
 		}
 	};
 
@@ -129,6 +135,10 @@ export default function CreateEvent() {
 			{showLoading && <FullScreenLoader />}
 			{showToast && (
 				<ToastNotification
+					message={{
+						success: "Event created",
+						failed: "Error occurred",
+					}}
 					isEnabled={showToast}
 					variant={toastVariant}
 					onCloseToast={() => {

@@ -130,6 +130,10 @@ export default function EventDetails() {
 			{showLoading && <FullScreenLoader />}
 			{showToast && (
 				<ToastNotification
+					message={{
+						success: "Ticket purchased",
+						failed: "Error occurred",
+					}}
 					isEnabled={showToast}
 					variant={toastVariant}
 					onCloseToast={() => {
